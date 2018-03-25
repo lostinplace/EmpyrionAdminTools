@@ -20,17 +20,17 @@ When you log into the game, you can bring up the chat text input using either th
 
 `/at help` : discussed above
 
-#### Telport
+#### Teleport
 
 `/at teleport {targetPlayer} to {destinationPlayer}`
 
-This allows you to move players around by name.  THis command is only available ot moderators and above, because you should really have `gm` mode on while using it.  If you don't want to type out your own name, you can enter "me" as a shorthand.  It will try to look up active player names in the following order:
+This allows you to move players around by name.  This command is only available to moderators and above, because you should really have `gm` mode on while using it.  If you don't want to type out your own name, you can enter "me" as a shorthand.  It will try to look up active player names in the following order:
 
 1. Case insensitve containment search
 2. Case sensitive containment search
 3. Exact match
 
-note that the teleport command will only execute if the provided names both resolve ot one and only one player.
+Note that the teleport command will only execute if the provided names both resolve to one and only one player.
 
 #### Mailbox
 
@@ -38,7 +38,7 @@ note that the teleport command will only execute if the provided names both reso
 
 `/at mailbox {playerName}`
 
-By using this invocation, you can bring up an inventory window for temporarily storing items outside of your character's body, or receivng gifts from admins.  This means that your mailbox can be used to store your items when you logoff, so you don't have to worry about waking up in space and losing everything.
+By using this invocation, you can bring up an inventory window for temporarily storing items outside of your character's body, or receivng gifts from admins.  This means that your mailbox can be used to store your items when you log off, so you don't have to worry about waking up in space and losing everything.
 
 As an admin, you can bring up the mailbox for a player, and load items for them to access regardless of where they are.
 
@@ -46,9 +46,6 @@ As an admin, you can bring up the mailbox for a player, and load items for them 
 
 Yup, that's it for now.  If you have anything you'd like to see added, let me know, or send me a pull request.
 
-
 ---
 
 Have fun!
-
-
