@@ -11,31 +11,54 @@ namespace EmpyrionAdminTools
   public partial class AdminToolsMod : SimpleMod
   {
     private Dictionary<int, PlayerInfo> playerInfoCache = new Dictionary<int, PlayerInfo>();
+    
 
     public override void Initialize(ModGameAPI dediAPI)
     {
+
+      this.verbose = true;
+
       this.Event_Player_Connected += PlayerConnnectedHandler;
       this.Event_Player_Disconnected += RemovePlayerInfoFromCache;
       this.Event_Player_Info += CachePlayerInfo;
 
 
       var ownMailboxCommand = new ChatCommand(
-        @"/mailbox", HandleOpenMailboxCall, "open your mailbox"
+        @"/at mailbox", HandleOpenMailboxCall, "open your mailbox"
       );
 
       var otherPlayerMailboxCommand = new ChatCommand(
-        @"/mailbox (?<playerName>\S+)", HandleOtherMailboxCall, "open the mailbox for {playerName}"
+        @"/at mailbox (?<playerName>.+)", HandleOtherMailboxCall, "open the mailbox for {playerName}", PermissionType.Moderator
       );
 
       var teleportCommand = new ChatCommand(
-        @"/teleport (?<targetName>\S+) to (?<destinationName>\S+)",
+        @"/at teleport (?<targetName>.+) to (?<destinationName>.+)",
         HandleTeleportCommand,
         @"teleports player with {targetName} to the location of player with {destinationName}." +
-          @"Use ""me"" to indicate yourself."
+          @"Use ""me"" to indicate yourself.",
+        PermissionType.Moderator
       );
       
       this.ChatCommands.Add(teleportCommand);
       this.ChatCommands.Add(ownMailboxCommand);
+      this.ChatCommands.Add(otherPlayerMailboxCommand);
+
+      this.ChatCommands.Add(new ChatCommand(@"/at help", (data, __) => {
+        this.Request_Player_Info(data.playerId.ToId(), (info) =>
+        {
+          var playerPermissionLevel = (PermissionType)info.permission;
+          var header = $"Commands available to {info.playerName}; permission level {playerPermissionLevel}\n";
+
+          var lines = this.GetChatCommandsForPermissionLevel(playerPermissionLevel)
+            .Select(x => x.ToString())
+            .OrderBy(x => x.Length).ToList();
+
+          lines.Insert(0, header);
+
+          var msg = String.Join("\n", lines.ToArray()).ToIdMsgPrio(data.playerId);
+          Request_ShowDialog_SinglePlayer(msg);
+        });
+      }));
     }
 
     public void PlayerConnnectedHandler(Id playerId){
@@ -65,8 +88,7 @@ namespace EmpyrionAdminTools
 
       if (candidates.Count == 0)
       {
-        var message = $@"there are no currently active players found with the name" +
-          $@"containing, ""{name}""";
+        var message = $@"there are no currently active players found with the name containing, ""{name}""";
         MessagePlayer(requesterId, message);
         return null;
       }
@@ -77,13 +99,11 @@ namespace EmpyrionAdminTools
         var exactMatch = candidates.FirstOrDefault(x => x.playerName == name);
         if (exactMatch != null) return exactMatch;
 
-        var message = $@"{caseSensitive.Count} active players found with a name containing," +
-        $@"""{name}"". Please be more specific";
+        var message = $@"{caseSensitive.Count} active players found with a name containing, ""{name}"". Please be more specific";
         MessagePlayer(requesterId, message);
         return null;  
       }
       return candidates.First();
     }
-
   }
 }

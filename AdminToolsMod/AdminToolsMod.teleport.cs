@@ -36,13 +36,26 @@ namespace EmpyrionAdminTools
           var msg = $@"{requesterName} is teleporting you to the location of {destinationPlayerInfo.playerName}";
           MessagePlayer(targetPlayerInfo.entityId, msg);
 
-          var teleportArg = new IdPlayfieldPositionRotation(
-            targetPlayerInfo.entityId,
-            destinationPlayerInfo.playfield,
-            destinationPlayerInfo.pos,
-            destinationPlayerInfo.rot
-          );
-          this.Request_Entity_ChangePlayfield(teleportArg);
+          if(targetPlayerInfo.playfield != destinationPlayerInfo.playfield)
+          {
+            var teleportArg = new IdPlayfieldPositionRotation(
+              targetPlayerInfo.entityId,
+              destinationPlayerInfo.playfield,
+              destinationPlayerInfo.pos,
+              destinationPlayerInfo.rot
+            );
+
+            this.Request_Player_ChangePlayerfield(teleportArg);
+          } else
+          {
+            var teleportArg = new IdPositionRotation(
+              targetPlayerInfo.entityId,
+              destinationPlayerInfo.pos,
+              destinationPlayerInfo.rot
+            );
+
+            this.Request_Entity_Teleport(teleportArg);
+          }
         };
 
         this.Request_Player_Info(new Id(targetPlayerInfo.entityId), (result) =>
