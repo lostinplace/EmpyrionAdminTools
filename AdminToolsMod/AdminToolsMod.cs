@@ -55,7 +55,11 @@ namespace EmpyrionAdminTools
 
           lines.Insert(0, header);
 
-          var msg = String.Join("\n", lines.ToArray()).ToIdMsgPrio(data.playerId);
+          var msg = new DialogBoxData()
+          {
+            Id = data.playerId,
+            MsgText = String.Join("\n", lines.ToArray())
+          };
           Request_ShowDialog_SinglePlayer(msg);
         });
       }));
