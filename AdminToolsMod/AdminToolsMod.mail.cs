@@ -72,16 +72,16 @@ namespace EmpyrionAdminTools
       col.EnsureIndex(x => x.steamId, true);
     }
 
-    public void HandleOtherMailboxCall(ChatInfo info, Dictionary<string, string> args)
+    public void HandleOtherMailboxCall(ChatMsgData info, Dictionary<string, string> args)
     {
-      var other = VocallyGetCachedPlayerInfoFromName(args["playerName"], info.playerId);
-      HandleMailBoxRequest(other, info.playerId);
+      var other = VocallyGetCachedPlayerInfoFromName(args["playerName"], info.SenderEntityId);
+      HandleMailBoxRequest(other, info.SenderEntityId);
     }
 
-    public void HandleOpenMailboxCall(ChatInfo info, Dictionary<string, string> args)
+    public void HandleOpenMailboxCall(ChatMsgData info, Dictionary<string, string> args)
     {
-      var pi = playerInfoCache[info.playerId];
-      HandleMailBoxRequest(pi, info.playerId);
+      var pi = playerInfoCache[info.SenderEntityId];
+      HandleMailBoxRequest(pi, info.SenderEntityId);
     }
 
     public void HandleMailBoxRequest(PlayerInfo player, int viewer)

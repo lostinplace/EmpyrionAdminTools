@@ -24,27 +24,45 @@ namespace EmpyrionAdminTools
 
 
       var ownMailboxCommand = new ChatCommand(
-        @"/at mailbox", HandleOpenMailboxCall, "open your mailbox"
+        @"::at mailbox", HandleOpenMailboxCall, "open your mailbox"
       );
 
       var otherPlayerMailboxCommand = new ChatCommand(
-        @"/at mailbox (?<playerName>.+)", HandleOtherMailboxCall, "open the mailbox for {playerName}", PermissionType.Moderator
+        @"::at mailbox (?<playerName>.+)", HandleOtherMailboxCall, "open the mailbox for {playerName}", PermissionType.Moderator
       );
 
       var teleportCommand = new ChatCommand(
-        @"/at teleport (?<targetName>.+) to (?<destinationName>.+)",
+        @"::at teleport (?<targetName>.+) to (?<destinationName>.+)",
         HandleTeleportCommand,
         @"teleports player with {targetName} to the location of player with {destinationName}." +
           @"Use ""me"" to indicate yourself.",
         PermissionType.Moderator
       );
+
+      var setMaxHPCommand = new ChatCommand(
+          @"::at setmax",
+          (data, __) =>
+          {
+            var piset = new PlayerInfoSet()
+            {
+              healthMax = 10,
+              health = 0,
+              entityId = data.SenderEntityId,
+              
+            };
+
+            this.Request_Player_SetPlayerInfo(piset);
+
+
+          });
       
       this.ChatCommands.Add(teleportCommand);
       this.ChatCommands.Add(ownMailboxCommand);
       this.ChatCommands.Add(otherPlayerMailboxCommand);
+      this.ChatCommands.Add(setMaxHPCommand);
 
-      this.ChatCommands.Add(new ChatCommand(@"/at help", (data, __) => {
-        this.Request_Player_Info(data.playerId.ToId(), (info) =>
+      this.ChatCommands.Add(new ChatCommand(@"::at help", (data, __) => {
+        this.Request_Player_Info(data.SenderEntityId.ToId(), (info) =>
         {
           var playerPermissionLevel = (PermissionType)info.permission;
           var header = $"Commands available to {info.playerName}; permission level {playerPermissionLevel}\n";
@@ -57,7 +75,7 @@ namespace EmpyrionAdminTools
 
           var msg = new DialogBoxData()
           {
-            Id = data.playerId,
+            Id = data.SenderEntityId,
             MsgText = String.Join("\n", lines.ToArray())
           };
           Request_ShowDialog_SinglePlayer(msg);

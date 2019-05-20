@@ -8,28 +8,28 @@ namespace EmpyrionAdminTools
 {
   public partial class AdminToolsMod
   {
-    public void HandleTeleportCommand(ChatInfo data, Dictionary<string, string> args)
+    public void HandleTeleportCommand(ChatMsgData data, Dictionary<string, string> args)
     {
-      this.Request_Player_Info(new Id(data.playerId), (info) =>
+      this.Request_Player_Info(new Id(data.SenderEntityId), (info) =>
       {
         if (info.permission < (int)PermissionType.GameMaster)
         {
-          MessagePlayer(data.playerId, "You have insufficient permissions to teleport");
+          MessagePlayer(data.SenderEntityId, "You have insufficient permissions to teleport");
           return;
         }
 
-        var requesterName = playerInfoCache[data.playerId].playerName;
+        var requesterName = playerInfoCache[data.SenderEntityId].playerName;
 
         var targetName = args["targetName"];
         var destinationName = args["destinationName"];
 
         var targetPlayerInfo = targetName == "me" ?
           info :
-          VocallyGetCachedPlayerInfoFromName(targetName, data.playerId);
+          VocallyGetCachedPlayerInfoFromName(targetName, data.SenderEntityId);
 
         var destinationPlayerInfo = destinationName == "me" ?
           info :
-          VocallyGetCachedPlayerInfoFromName(destinationName, data.playerId);
+          VocallyGetCachedPlayerInfoFromName(destinationName, data.SenderEntityId);
 
         Action execute = () =>
         {
